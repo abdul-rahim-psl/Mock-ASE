@@ -5,8 +5,6 @@ import {
   generateWalletId,
   findUserById,
   findUserByWalletId,
-  updateUserBalance,
-  addTransaction,
   getUserTransactions,
   getWalletTransactions,
   getTotalSystemBalance

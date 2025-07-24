@@ -11,9 +11,14 @@ const config = {
   verbose: true,
   // Show timestamps in logs
   showTimestamp: true,
+  // Show sequential log numbers
+  showLogNumber: true,
   // Log levels that are currently enabled
   enabledLevels: ['info', 'warn', 'error', 'debug', 'api']
 };
+
+// Counter for sequential log numbering
+let logCounter = 0;
 
 // Log level emojis for visual distinction
 const emojis = {
@@ -46,11 +51,17 @@ const colors = {
  */
 const formatLog = (level: string, message: string): string => {
   const emoji = emojis[level as keyof typeof emojis] || '';
-const now = new Date();
-const hours12 = now.getHours() % 12 || 12;
-const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
-const timestamp = config.showTimestamp
+  const now = new Date();
+  const hours12 = now.getHours() % 12 || 12;
+  const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+  const timestamp = config.showTimestamp
     ? `${hours12.toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${ampm} `
+    : '';
+  
+  // Increment and format the sequential log number
+  logCounter++;
+  const logNumber = config.showLogNumber
+    ? `[#${logCounter.toString()}] `
     : '';
   
   let color = colors.reset;
@@ -58,13 +69,13 @@ const timestamp = config.showTimestamp
     case 'error': color = colors.red; break;
     case 'warn': color = colors.yellow; break;
     case 'info': color = colors.cyan; break;
-    color = colors.blue; break;
+    case 'debug': color = colors.blue; break;
     case 'api': color = colors.magenta; break;
     case 'success': color = colors.green; break;
     default: color = colors.reset;
   }
   
-  return `${color}${emoji} ${timestamp}[${level.toUpperCase()}]${colors.reset} ${message}`;
+  return `${color}${emoji} ${timestamp}${logNumber}[${level.toUpperCase()}]${colors.reset} ${message}`;
 };
 
 /**
@@ -86,7 +97,7 @@ const log = (level: string, message: string, ...args: any[]) => {
       break;
     default:
       console.log(formattedMessage, ...args);
-      console.log(); // Add empty line after log
+      console.log("-------------------------------------------------------------------------------------"); // Add empty line after log
   }
 };
 
@@ -107,5 +118,10 @@ export const logger = {
   // Set configuration
   configure: (newConfig: Partial<typeof config>) => {
     Object.assign(config, newConfig);
+  },
+  
+  // Reset the log counter
+  resetCounter: () => {
+    logCounter = 0;
   }
 };
