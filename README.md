@@ -2,6 +2,23 @@
 
 A simplified bank teller system built with Next.js, TypeScript, Tailwind CSS, and GraphQL for managing customer accounts, deposits, and transfers.
 
+## 🌐 Access Your App Remotely
+
+This project includes localtunnel integration to expose your locally running app to the internet:
+
+```bash
+# Start the Next.js dev server and tunnel together
+npm run dev:tunnel
+
+# Or start just the tunnel (if your app is already running)
+npm run tunnel
+
+# Specify a custom subdomain
+npm run tunnel your-custom-subdomain
+```
+
+The tunnel URL will be displayed in the console. The integration automatically includes the `bypass-tunnel-reminder` header to avoid interstitial pages.
+
 ## 🚀 Features
 
 ### User Management Dashboard
