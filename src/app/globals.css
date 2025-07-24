@@ -3,6 +3,17 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --card-hover: #f9fafb;
+  --card-selected: #eef2ff;
+  --input-border: #d1d5db;
+  --input-focus-ring: #3b82f6;
+  --button-hover: #f3f4f6;
+  --text-muted: #6b7280;
+  --text-heading: #111827;
+  --text-body: #374151;
+  --border-subtle: #e5e7eb;
 }
 
 @theme inline {
@@ -14,8 +25,19 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f172a;     /* Dark blue-gray background */
+    --foreground: #f1f5f9;     /* Light text */
+    --card-bg: #1e293b;        /* Slightly lighter card background */
+    --card-border: #334155;    /* Visible but subtle border */
+    --card-hover: #1e293b;     /* Hover state for cards */
+    --card-selected: #1e3a8a;  /* Selected state highlighting */
+    --input-border: #475569;   /* Input field borders */
+    --input-focus-ring: #2563eb; /* Focus ring color */
+    --button-hover: #334155;   /* Button hover state */
+    --text-muted: #94a3b8;     /* Subtle text */
+    --text-heading: #f1f5f9;   /* Heading text */
+    --text-body: #cbd5e1;      /* Body text */
+    --border-subtle: #334155;  /* Subtle border color */
   }
 }
 

@@ -70,7 +70,7 @@ export default function Dashboard() {
   const selectedUser = selectedUserId ? users.find((user: any) => user.id === selectedUserId) : null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <Header 
         totalBalance={totalBalance}
         onRefresh={handleRefresh}
@@ -80,7 +80,7 @@ export default function Dashboard() {
       
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Left Panel - User List */}
-        <div className="w-1/3 bg-white border-r border-gray-200 overflow-hidden">
+        <div className="w-1/3 bg-[var(--card-bg)] border-r border-[var(--card-border)] overflow-hidden">
           <UserList
             users={users}
             loading={usersLoading}
@@ -91,7 +91,7 @@ export default function Dashboard() {
         </div>
 
         {/* Main Area */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden bg-[var(--background)]">
           {activeView === 'users' && selectedUser && (
             <UserDetails
               user={selectedUser}
@@ -100,10 +100,10 @@ export default function Dashboard() {
           )}
           
           {activeView === 'users' && !selectedUser && (
-            <div className="h-full flex items-center justify-center text-gray-500">
+            <div className="h-full flex items-center justify-center text-[var(--text-muted)]">
               <div className="text-center">
-                <h3 className="text-lg font-medium mb-2">Select a User</h3>
-                <p>Choose a user from the list to view their details and manage their account.</p>
+                <h3 className="text-lg font-medium mb-2 text-[var(--text-heading)]">Select a User</h3>
+                <p className="text-[var(--text-body)]">Choose a user from the list to view their details and manage their account.</p>
               </div>
             </div>
           )}
@@ -134,9 +134,9 @@ export default function Dashboard() {
         </div>
 
         {/* Right Panel - Recent Activity */}
-        <div className="w-80 bg-white border-l border-gray-200 overflow-hidden">
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+        <div className="w-80 bg-[var(--card-bg)] border-l border-[var(--card-border)] overflow-hidden">
+          <div className="p-4 border-b border-[var(--card-border)]">
+            <h2 className="text-lg font-semibold text-[var(--text-heading)]">Recent Activity</h2>
           </div>
           <div className="h-full overflow-y-auto">
             <TransactionFeed

@@ -12,14 +12,14 @@ interface HeaderProps {
 
 export function Header({ totalBalance, onRefresh, activeView, onViewChange }: HeaderProps) {
   return (
-    <header className="bg-white border-b border-gray-200 h-16">
+    <header className="bg-[var(--card-bg)] border-b border-[var(--card-border)] h-16">
       <div className="flex items-center justify-between h-full px-6">
         {/* Logo and Title */}
         <div className="flex items-center space-x-4">
-          <div className="text-xl font-bold text-gray-900">
+          <div className="text-xl font-bold text-[var(--text-heading)]">
             Mock Account Servicing Entity
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-[var(--text-muted)]">
             Total System Balance: {formatCurrency(totalBalance)}
           </div>
         </div>
@@ -30,8 +30,8 @@ export function Header({ totalBalance, onRefresh, activeView, onViewChange }: He
             onClick={() => onViewChange('users')}
             className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
               activeView === 'users'
-                ? 'bg-blue-100 text-blue-700'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                ? 'bg-blue-500/20 text-blue-400 dark:text-blue-300'
+                : 'text-[var(--text-body)] hover:text-[var(--text-heading)] hover:bg-[var(--button-hover)]'
             }`}
           >
             <Users className="h-4 w-4" />
@@ -42,8 +42,8 @@ export function Header({ totalBalance, onRefresh, activeView, onViewChange }: He
             onClick={() => onViewChange('transactions')}
             className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
               activeView === 'transactions'
-                ? 'bg-blue-100 text-blue-700'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                ? 'bg-blue-500/20 text-blue-400 dark:text-blue-300'
+                : 'text-[var(--text-body)] hover:text-[var(--text-heading)] hover:bg-[var(--button-hover)]'
             }`}
           >
             <Activity className="h-4 w-4" />
@@ -54,8 +54,8 @@ export function Header({ totalBalance, onRefresh, activeView, onViewChange }: He
             onClick={() => onViewChange('transfer')}
             className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
               activeView === 'transfer'
-                ? 'bg-blue-100 text-blue-700'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                ? 'bg-blue-500/20 text-blue-400 dark:text-blue-300'
+                : 'text-[var(--text-body)] hover:text-[var(--text-heading)] hover:bg-[var(--button-hover)]'
             }`}
           >
             <ArrowUpDown className="h-4 w-4" />
@@ -66,8 +66,8 @@ export function Header({ totalBalance, onRefresh, activeView, onViewChange }: He
             onClick={() => onViewChange('create-user')}
             className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
               activeView === 'create-user'
-                ? 'bg-green-100 text-green-700'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                ? 'bg-green-500/20 text-green-400 dark:text-green-300'
+                : 'text-[var(--text-body)] hover:text-[var(--text-heading)] hover:bg-[var(--button-hover)]'
             }`}
           >
             <Plus className="h-4 w-4" />
@@ -78,7 +78,7 @@ export function Header({ totalBalance, onRefresh, activeView, onViewChange }: He
         {/* Refresh Button */}
         <button
           onClick={onRefresh}
-          className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+          className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-[var(--text-body)] hover:text-[var(--text-heading)] hover:bg-[var(--button-hover)] rounded-md transition-colors"
         >
           <RefreshCw className="h-4 w-4" />
           <span>Refresh</span>
