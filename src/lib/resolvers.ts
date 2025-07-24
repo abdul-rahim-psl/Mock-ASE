@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { prisma } from './prisma';
 import { logger } from './logger';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 // Define types for the resolvers
 type User = {
@@ -284,7 +284,7 @@ export const resolvers = {
         const walletId = `wallet-${uuidv4().substring(0, 8)}`;
 
         // Use transaction to ensure both user and wallet are created
-        const result = await prisma.$transaction(async (prismaTransaction: PrismaClient) => {
+        const result = await prisma.$transaction(async (prismaTransaction) => {
           // Create user with wallet ID
           const user = await prismaTransaction.user.create({
             data: {
@@ -342,13 +342,17 @@ export const resolvers = {
         
         if (!user || !user.wallet) {
           logger.error(`Deposit failed: User not found with ID: ${userId}`);
-          throw new Error('User not found');
+          throw new Error('User not found or wallet not found');
         }
 
+        // We know user.wallet is not null at this point
+        const wallet = user.wallet;
+        const currentBalance = Number(wallet.balance || 0);
+
         // Use transaction to ensure atomicity
-        return await prisma.$transaction(async (prismaTransaction: PrismaClient) => {
+        return await prisma.$transaction(async (prismaTransaction) => {
           // Calculate new balance
-          const newBalance = Number(user.wallet.balance) + amount;
+          const newBalance = currentBalance + amount;
           
           // Update wallet balance
           const updatedWallet = await prismaTransaction.wallet.update({
@@ -432,7 +436,7 @@ export const resolvers = {
         }
 
         // Use a transaction for atomic updates
-        const transaction = await prisma.$transaction(async (prismaTransaction: PrismaClient) => {
+        const transaction = await prisma.$transaction(async (prismaTransaction) => {
           // Calculate new balances
           const newFromBalance = fromBalance - amount;
           const newToBalance = Number(toWallet.balance) + amount;

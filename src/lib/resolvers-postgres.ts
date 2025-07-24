@@ -22,7 +22,8 @@ export const resolvers = {
           include: { wallet: true }
         });
         
-        const users = dbUsers.map((user: { id: any; name: any; email: any; walletId: any; wallet: { balance: any; }; createdAt: any; }) => ({
+        // Use a properly typed approach to map the results
+        const users = dbUsers.map((user) => ({
           id: user.id,
           name: user.name,
           email: user.email,

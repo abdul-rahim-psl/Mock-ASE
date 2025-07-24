@@ -11,13 +11,15 @@ This document provides instructions for setting up the PostgreSQL database for t
 
 ### 1. Configure Database Connection
 
-Update the `.env` file with your PostgreSQL connection details:
+Create or update the `.env` file in the project root with your PostgreSQL connection details:
 
 ```
-DATABASE_URL="postgresql://username:password@localhost:5432/mock_ase?schema=public"
+DATABASE_URL="postgresql://postgres:pg@localhost:5432/mock_ase?schema=public"
 ```
 
-Replace `username` and `password` with your PostgreSQL credentials.
+This connection string is configured specifically for:
+- Username: postgres
+- Password: pg
 
 ### 2. Create the Database
 
