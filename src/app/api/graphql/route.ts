@@ -21,7 +21,7 @@ const loggingPlugin = {
     const operationName = request.operationName || 'unnamed operation';
     const startTime = Date.now();
 
-    // Format operation type and name for logging
+    // Format operation type and name for logging with clear separator
     logger.api(`GraphQL ${request.operationName ? `[${request.operationName}]` : 'Operation'}`);
     
     return {
@@ -48,6 +48,7 @@ const loggingPlugin = {
         if (source.trim().startsWith('mutation')) {
           const variables = JSON.stringify(request.variables);
           logger.api(`Variables: ${variables.length > 200 ? variables.substring(0, 200) + '...' : variables}`);
+          // Additional empty line is already handled by the logger function
         }
       },
       
@@ -75,6 +76,7 @@ const server = new ApolloServer({
     ApolloServerPluginLandingPageLocalDefault(),
   ],
   formatError: (error) => {
+    // Enhanced error logging with clear visibility
     logger.error(`GraphQL Error: ${error.message}`);
     
     // Return a sanitized error message to the client

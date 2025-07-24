@@ -24,7 +24,7 @@ export default function Dashboard() {
   const transactions = transactionsData?.getTransactions || [];
   const totalBalance = balanceData?.getTotalSystemBalance || 0;
 
-  // Implement debounced refresh to prevent multiple rapid API calls
+  // Implement debounced refresh to prevent multiple rapid API calls when data changes
   const [refreshPending, setRefreshPending] = useState(false);
   
   // This function schedules a refresh rather than executing it immediately
@@ -55,19 +55,20 @@ export default function Dashboard() {
     };
   }, [refreshPending, performRefresh]);
   
-  // Auto-refresh data periodically (every 30 seconds instead of 3-5 seconds)
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      scheduleRefresh();
-    }, 30000); // Refresh every 30 seconds
-    
-    return () => clearInterval(intervalId);
-  }, [scheduleRefresh]);
-  
   // Expose the scheduled refresh function as handleRefresh for components to use
   const handleRefresh = scheduleRefresh;
 
-  const selectedUser = selectedUserId ? users.find((user: any) => user.id === selectedUserId) : null;
+  // Define a type for User instead of using 'any'
+  type User = {
+    id: string;
+    name: string;
+    email: string;
+    walletId: string;
+    balance: number;
+    createdAt: string;
+  };
+
+  const selectedUser = selectedUserId ? users.find((user: User) => user.id === selectedUserId) : null;
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">

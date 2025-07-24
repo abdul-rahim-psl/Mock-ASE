@@ -68,7 +68,7 @@ const timestamp = config.showTimestamp
 };
 
 /**
- * Log a message with the specified level
+ * Log a message with the specified level and add an empty line for better visibility
  */
 const log = (level: string, message: string, ...args: any[]) => {
   if (!config.verbose || !config.enabledLevels.includes(level)) return;
@@ -78,12 +78,15 @@ const log = (level: string, message: string, ...args: any[]) => {
   switch (level) {
     case 'error':
       console.error(formattedMessage, ...args);
+      console.error(); // Add empty line after log
       break;
     case 'warn':
       console.warn(formattedMessage, ...args);
+      console.warn(); // Add empty line after log
       break;
     default:
       console.log(formattedMessage, ...args);
+      console.log(); // Add empty line after log
   }
 };
 
