@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Mock Account Servicing Entity",
+  title: "Mock ASE",
   description: "A simplified bank teller system for managing customer accounts, deposits, and transfers",
 };
 
