@@ -21,13 +21,13 @@ const loggingPlugin = {
     const startTime = Date.now();
 
     // Format operation type and name for logging
-    logger.api(`GraphQL ${request.operationName ? `[${request.operationName}]` : 'Operation'} received`);
+    logger.api(`GraphQL ${request.operationName ? `[${request.operationName}]` : 'Operation'}`);
     
     return {
       // Called when the operation is parsed
       async didResolveOperation(context: any) {
         const { operation, operationName } = context;
-        logger.debug(`Type: ${operation} | Name: ${operationName || 'unnamed'}`);
+        // logger.debug(`Type: ${operation} | Name: ${operationName || 'unnamed'}`);
       },
       
       // Called when variables are parsed
@@ -41,7 +41,7 @@ const loggingPlugin = {
           .replace(/\s+\}/g, ' }')
           .substring(0, 100) + (source.length > 100 ? '...' : '');
           
-        logger.api(`Query: ${queryPreview}`);
+        // logger.api(`Query: ${queryPreview}`);
         
         // If this is a mutation, log the variables to show what's changing
         if (source.trim().startsWith('mutation')) {

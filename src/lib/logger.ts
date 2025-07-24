@@ -46,14 +46,19 @@ const colors = {
  */
 const formatLog = (level: string, message: string): string => {
   const emoji = emojis[level as keyof typeof emojis] || '';
-  const timestamp = config.showTimestamp ? `${new Date().toISOString()} ` : '';
+const now = new Date();
+const hours12 = now.getHours() % 12 || 12;
+const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+const timestamp = config.showTimestamp
+    ? `${hours12.toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${ampm} `
+    : '';
   
   let color = colors.reset;
   switch (level) {
     case 'error': color = colors.red; break;
     case 'warn': color = colors.yellow; break;
     case 'info': color = colors.cyan; break;
-    case 'debug': color = colors.dim; break;
+    color = colors.blue; break;
     case 'api': color = colors.magenta; break;
     case 'success': color = colors.green; break;
     default: color = colors.reset;
