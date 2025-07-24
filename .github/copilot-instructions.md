@@ -6,7 +6,7 @@
 This is a Mock Account Servicing Entity - a simplified bank teller system built with:
 - **Frontend**: Next.js 15 with TypeScript, App Router, Tailwind CSS
 - **Backend**: GraphQL API with Apollo Server
-- **Data**: In-memory storage (for MVP)
+- **Data**: Postgres Database using Prisma ORM
 
 ## Architecture Overview
 - **Pages**: Admin dashboard, user management, transaction views
