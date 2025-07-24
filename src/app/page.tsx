@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_USERS, GET_TRANSACTIONS, GET_TOTAL_SYSTEM_BALANCE } from '@/lib/queries';
 import { Header } from '@/components/Header';
@@ -14,27 +14,58 @@ export default function Dashboard() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<'users' | 'transactions' | 'transfer' | 'create-user'>('users');
   
-  const { data: usersData, loading: usersLoading, refetch: refetchUsers } = useQuery(GET_USERS, {
-    pollInterval: 5000, // Poll every 5 seconds for real-time updates
-  });
+  const { data: usersData, loading: usersLoading, refetch: refetchUsers } = useQuery(GET_USERS);
   
-  const { data: transactionsData, loading: transactionsLoading, refetch: refetchTransactions } = useQuery(GET_TRANSACTIONS, {
-    pollInterval: 3000, // Poll every 3 seconds for real-time updates
-  });
-  
-  const { data: balanceData, refetch: refetchBalance } = useQuery(GET_TOTAL_SYSTEM_BALANCE, {
-    pollInterval: 5000,
-  });
+  const { data: transactionsData, loading: transactionsLoading, refetch: refetchTransactions } = useQuery(GET_TRANSACTIONS);
+
+  const { data: balanceData, refetch: refetchBalance } = useQuery(GET_TOTAL_SYSTEM_BALANCE);
 
   const users = usersData?.getUsers || [];
   const transactions = transactionsData?.getTransactions || [];
   const totalBalance = balanceData?.getTotalSystemBalance || 0;
 
-  const handleRefresh = () => {
+  // Implement debounced refresh to prevent multiple rapid API calls
+  const [refreshPending, setRefreshPending] = useState(false);
+  
+  // This function schedules a refresh rather than executing it immediately
+  const scheduleRefresh = useCallback(() => {
+    setRefreshPending(true);
+  }, []);
+  
+  // Actual refresh function that performs the API calls
+  const performRefresh = useCallback(() => {
     refetchUsers();
     refetchTransactions();
     refetchBalance();
-  };
+    setRefreshPending(false);
+  }, [refetchUsers, refetchTransactions, refetchBalance]);
+  
+  // Debounced refresh effect - will only refresh after 300ms of inactivity
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null;
+    
+    if (refreshPending) {
+      timeoutId = setTimeout(() => {
+        performRefresh();
+      }, 300); // 300ms debounce
+    }
+    
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [refreshPending, performRefresh]);
+  
+  // Auto-refresh data periodically (every 30 seconds instead of 3-5 seconds)
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      scheduleRefresh();
+    }, 30000); // Refresh every 30 seconds
+    
+    return () => clearInterval(intervalId);
+  }, [scheduleRefresh]);
+  
+  // Expose the scheduled refresh function as handleRefresh for components to use
+  const handleRefresh = scheduleRefresh;
 
   const selectedUser = selectedUserId ? users.find((user: any) => user.id === selectedUserId) : null;
 
@@ -55,7 +86,7 @@ export default function Dashboard() {
             loading={usersLoading}
             selectedUserId={selectedUserId}
             onUserSelect={setSelectedUserId}
-            onRefresh={refetchUsers}
+            onRefresh={handleRefresh}
           />
         </div>
 
