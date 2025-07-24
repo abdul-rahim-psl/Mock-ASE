@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Define the seed script
+/// @seed prisma/seed.ts
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  walletId  String   @unique @map("wallet_id")
+  wallet    Wallet?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("users")
+}
+
+model Wallet {
+  id            String        @id
+  userId        String        @unique @map("user_id")
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance       Decimal       @default(0.00) @db.Decimal(15, 2)
+  sentTxns      Transaction[] @relation("FromWallet")
+  receivedTxns  Transaction[] @relation("ToWallet")
+
+  @@map("wallets")
+}
+
+model Transaction {
+  id           String   @id @default(uuid())
+  fromWalletId String?  @map("from_wallet_id")
+  fromWallet   Wallet?  @relation("FromWallet", fields: [fromWalletId], references: [id])
+  toWalletId   String   @map("to_wallet_id") 
+  toWallet     Wallet   @relation("ToWallet", fields: [toWalletId], references: [id])
+  amount       Decimal  @db.Decimal(15, 2)
+  timestamp    DateTime @default(now())
+  status       String
+  description  String
+  type         String
+
+  @@map("transactions")
+}

@@ -1,6 +1,21 @@
 # Mock Account Servicing Entity
 
-A simplified bank teller system built with Next.js, TypeScript, Tailwind CSS, and GraphQL for managing customer accounts, deposits, and transfers.
+A simplified bank teller system built with Next.js, TypeScript, Tailwind CSS, and GraphQL for managing customer accounts, deposits, and transfers. Data is persistently stored in PostgreSQL.
+
+## 📊 Database Integration
+
+This application uses PostgreSQL for persistent data storage:
+
+```bash
+# Set up the database (see DB-SETUP.md for detailed instructions)
+npx prisma migrate dev --name init
+npx prisma generate
+
+# View database in Prisma Studio
+npx prisma studio
+```
+
+For detailed database setup instructions, please refer to [DB-SETUP.md](DB-SETUP.md).
 
 ## 🌐 Access Your App Remotely
 

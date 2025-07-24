@@ -3,7 +3,8 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
 import { GraphQLError } from 'graphql';
 import { typeDefs } from '@/lib/schema';
-import { resolvers } from '@/lib/resolvers';
+// Import Prisma-based resolvers instead of in-memory ones
+import { resolvers } from '@/lib/resolvers-postgres';
 import { logger } from '@/lib/logger';
 
 // Define type-safe logging plugin

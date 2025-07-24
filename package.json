@@ -8,18 +8,28 @@
     "start": "next start",
     "lint": "next lint",
     "tunnel": "node tunnel.js",
-    "dev:tunnel": "concurrently \"npm run dev\" \"npm run tunnel\""
+    "dev:tunnel": "concurrently \"npm run dev\" \"npm run tunnel\"",
+    "db:migrate": "npx prisma migrate dev",
+    "db:seed": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
+    "db:studio": "npx prisma studio",
+    "db:setup": "npm run db:migrate && npm run db:seed",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "prisma:migrate:reset": "prisma migrate reset",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",
     "@apollo/server": "^5.0.0",
     "@as-integrations/next": "^4.0.0",
+    "@prisma/client": "^6.12.0",
     "@types/uuid": "^10.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "graphql": "^16.11.0",
     "lucide-react": "^0.525.0",
     "next": "15.4.2",
+    "prisma": "^6.12.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "tailwind-merge": "^3.3.1",
@@ -36,6 +46,7 @@
     "eslint-config-next": "15.4.2",
     "localtunnel": "^2.0.2",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
