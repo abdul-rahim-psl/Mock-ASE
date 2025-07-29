@@ -11,6 +11,7 @@ import {
 } from './data-postgres';
 import { logger } from './logger';
 import { prisma } from './prisma';
+import { sendTransactionWebhook } from './webhooks';
 
 export const resolvers = {
   Query: {
@@ -217,6 +218,46 @@ export const resolvers = {
           logger.success(`Deposit successful: $${amount.toFixed(2)} to ${user.name}'s wallet`);
           logger.wallet(`New balance for ${user.name}: $${newBalance.toFixed(2)}`);
           
+          // Get the created transaction for webhook notification
+          const transactions = await prisma.transaction.findMany({
+            where: {
+              toWalletId: user.walletId,
+              type: 'DEPOSIT',
+            },
+            orderBy: {
+              timestamp: 'desc',
+            },
+            take: 1,
+          });
+          
+          if (transactions.length > 0) {
+            const transaction = transactions[0];
+            // Convert to our Transaction type
+            const transactionData: Transaction = {
+              id: transaction.id,
+              fromWalletId: transaction.fromWalletId,
+              toWalletId: transaction.toWalletId,
+              amount: Number(transaction.amount),
+              timestamp: transaction.timestamp,
+              status: transaction.status as 'COMPLETED' | 'FAILED' | 'PENDING',
+              description: transaction.description,
+              type: transaction.type as 'DEPOSIT' | 'TRANSFER',
+            };
+            
+            // Trigger webhook for the deposit transaction
+            sendTransactionWebhook(transactionData)
+              .then((success) => {
+                if (success) {
+                  logger.success(`Webhook notifications sent successfully for deposit ${transaction.id}`);
+                } else {
+                  logger.warn(`Some webhook notifications failed for deposit ${transaction.id}`);
+                }
+              })
+              .catch((error) => {
+                logger.error(`Error sending webhook notifications: ${error}`);
+              });
+          }
+          
           return {
             ...user,
             balance: newBalance,
@@ -308,6 +349,19 @@ export const resolvers = {
         logger.success(`Transfer completed: $${amount.toFixed(2)} from ${fromUser.name} to ${toUser.name} (ID: ${result.id})`);
         logger.wallet(`New balance for ${fromUser.name}: $${(fromUser.balance - amount).toFixed(2)}`);
         logger.wallet(`New balance for ${toUser.name}: $${(toUser.balance + amount).toFixed(2)}`);
+
+        // Trigger webhook for the transfer transaction
+        sendTransactionWebhook(result)
+          .then((success) => {
+            if (success) {
+              logger.success(`Webhook notifications sent successfully for transaction ${result.id}`);
+            } else {
+              logger.warn(`Some webhook notifications failed for transaction ${result.id}`);
+            }
+          })
+          .catch((error) => {
+            logger.error(`Error sending webhook notifications: ${error}`);
+          });
 
         return result;
       } catch (error) {

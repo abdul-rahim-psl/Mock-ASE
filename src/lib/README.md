@@ -12,6 +12,8 @@ This document provides an overview of the files in the `lib` directory of the Mo
 6. [resolvers-postgres.ts](#resolvers-postgrests)
 7. [schema.ts](#schemats)
 8. [utils.ts](#utilsts)
+9. [webhooks.ts](#webhooksts)
+10. [UI Customization Components](#ui-customization-components)
 
 ## apollo-client.ts
 
@@ -144,3 +146,24 @@ This document provides an overview of the files in the `lib` directory of the Mo
 - **formatCurrency(amount)**: Formats a number as USD currency.
 - **formatDate(dateString)**: Formats date strings into a readable format with error handling.
 - **formatWalletId(walletId)**: Shortens wallet IDs for display by truncating with ellipsis if too long.
+
+## webhooks.ts
+
+**Purpose**: Implements a webhook notification system for the application that sends HTTP requests to configured endpoints when transactions occur.
+
+### Types:
+
+- **WebhookConfig**: Configuration options for webhooks including enabled status, URLs, retry attempts, retry delay, and timeout.
+- **TransactionWebhookPayload**: The structure of data sent to webhook endpoints.
+
+### Functions:
+
+- **initWebhooks()**: Initializes webhook configuration from environment variables.
+- **addWebhookUrl(url)**: Adds a new webhook endpoint URL to the configuration.
+- **removeWebhookUrl(url)**: Removes a webhook endpoint URL from the configuration.
+- **setWebhooksEnabled(enabled)**: Toggles webhooks on or off.
+- **sendWebhookNotification(payload)**: Sends a webhook notification with retry logic.
+- **sendTransactionWebhook(transaction)**: Creates and sends a webhook payload for a transaction.
+- **getWebhookConfig()**: Returns the current webhook configuration.
+
+## UI Customization Components
