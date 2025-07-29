@@ -114,7 +114,7 @@ export const setWebhooksEnabled = (enabled: boolean): void => {
 };
 
 /**
- * Send a webhook notification with retry logic
+ * This is the low-level function that handles the actual HTTP delivery mechanics:
  * @param payload The webhook payload to send
  */
 export const sendWebhookNotification = async (payload: TransactionWebhookPayload): Promise<boolean> => {
@@ -193,7 +193,9 @@ export const sendWebhookNotification = async (payload: TransactionWebhookPayload
 };
 
 /**
- * Create and send a transaction webhook when a transfer occurs
+   Converts banking transaction data into a standardized webhook payload
+   Focuses on the business logic of what data should be sent
+
  * @param transaction The transaction that triggered the webhook
  */
 export const sendTransactionWebhook = async (transaction: Transaction): Promise<boolean> => {
