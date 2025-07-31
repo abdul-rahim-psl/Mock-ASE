@@ -11,6 +11,7 @@ interface User {
   name: string;
   email: string;
   walletId: string;
+  iban?: string;
   balance: number;
   createdAt: string;
 }
@@ -79,6 +80,12 @@ export function UserDetails({ user, onUserUpdate }: UserDetailsProps) {
               <Wallet className="h-4 w-4 text-gray-400" />
               <span className="text-sm text-gray-500">{user.walletId}</span>
             </div>
+            {user.iban && (
+              <div className="flex items-center space-x-2 mt-1">
+                <span className="text-sm font-semibold text-gray-500">IBAN:</span>
+                <span className="text-sm text-gray-500">{user.iban}</span>
+              </div>
+            )}
           </div>
           <div className="text-right">
             <p className="text-3xl font-bold text-green-600">{formatCurrency(user.balance)}</p>

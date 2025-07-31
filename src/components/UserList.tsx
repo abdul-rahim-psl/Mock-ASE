@@ -9,6 +9,7 @@ interface User {
   name: string;
   email: string;
   walletId: string;
+  iban?: string;
   balance: number;
   createdAt: string;
 }
@@ -27,7 +28,8 @@ export function UserList({ users, loading, selectedUserId, onUserSelect, onRefre
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.walletId.toLowerCase().includes(searchTerm.toLowerCase())
+    user.walletId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (user.iban && (searchTerm == '' || user.iban.toLowerCase().includes(searchTerm.toLowerCase())))
   );
 
   return (
@@ -80,11 +82,16 @@ export function UserList({ users, loading, selectedUserId, onUserSelect, onRefre
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-gray-900 truncate">{user.name}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 truncate">{user.name}</h3>
                     <p className="text-sm text-gray-500 truncate">{user.email}</p>
                     <p className="text-xs text-gray-400 mt-1">
-                      {formatWalletId(user.walletId)}
+                      <span className="font-semibold text-gray-500">Wallet Address:</span> {formatWalletId(user.walletId)}
                     </p>
+                    {user.iban && (
+                      <p className="text-xs text-gray-400 mt-1">
+                        <span className="font-semibold text-gray-500">IBAN:</span> {user.iban}
+                      </p>
+                    )}
                   </div>
                   <div className="text-right">
                     <p className="font-semibold text-gray-900">{formatCurrency(user.balance)}</p>

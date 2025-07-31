@@ -8,6 +8,7 @@ export const GET_USERS = gql`
       name
       email
       walletId
+      iban
       balance
       createdAt
     }
@@ -21,6 +22,7 @@ export const GET_USER = gql`
       name
       email
       walletId
+      iban
       balance
       createdAt
     }
@@ -34,6 +36,7 @@ export const GET_USER_BY_WALLET_ID = gql`
       name
       email
       walletId
+      iban
       balance
       createdAt
     }
@@ -99,6 +102,7 @@ export const CREATE_USER = gql`
       name
       email
       walletId
+      iban
       balance
       createdAt
     }
@@ -112,6 +116,7 @@ export const DEPOSIT_MONEY = gql`
       name
       email
       walletId
+      iban
       balance
       createdAt
     }

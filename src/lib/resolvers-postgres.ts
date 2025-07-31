@@ -3,6 +3,7 @@ import {
   User, 
   Transaction, 
   generateWalletId,
+  generateIBAN,
   findUserById,
   findUserByWalletId,
   getUserTransactions,
@@ -28,7 +29,8 @@ export const resolvers = {
           email: user.email,
           walletId: user.walletId,
           balance: user.wallet ? Number(user.wallet.balance) : 0,
-          createdAt: user.createdAt
+          createdAt: user.createdAt,
+          iban: user.iban ?? 'no iban',
         }));
         
         logger.user(`Query: getUsers - Fetching all users (count: ${users.length})`);
@@ -136,15 +138,17 @@ export const resolvers = {
         }
 
         const walletId = generateWalletId();
+        const iban = generateIBAN();
 
         // Use a transaction to ensure both user and wallet are created
-        const result = await prisma.$transaction(async (tx: { user: { create: (arg0: { data: { name: string; email: string; walletId: string; }; }) => any; }; wallet: { create: (arg0: { data: { id: string; userId: any; balance: number; }; }) => any; }; }) => {
+        const result = await prisma.$transaction(async (tx: { user: { create: (arg0: { data: { name: string; email: string; walletId: string; iban: string; }; }) => any; }; wallet: { create: (arg0: { data: { id: string; userId: any; balance: number; }; }) => any; }; }) => {
           // Create user
           const user = await tx.user.create({
             data: {
               name,
               email,
               walletId,
+              iban,
             },
           });
 
@@ -169,6 +173,7 @@ export const resolvers = {
           name: result.name,
           email: result.email,
           walletId: result.walletId,
+          iban: result.iban,
           balance: Number(result.balance),
           createdAt: result.createdAt,
         };

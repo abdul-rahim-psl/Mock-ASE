@@ -6,6 +6,7 @@ export const typeDefs = gql`
     name: String!
     email: String!
     walletId: String!
+    iban: String
     balance: Float!
     createdAt: String!
   }
