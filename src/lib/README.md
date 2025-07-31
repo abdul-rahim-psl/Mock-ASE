@@ -143,7 +143,7 @@ This document provides an overview of the files in the `lib` directory of the Mo
 ### Functions:
 
 - **cn(...inputs)**: Merges Tailwind CSS classes using clsx and tailwind-merge.
-- **formatCurrency(amount)**: Formats a number as USD currency.
+- **formatCurrency(amount)**: Formats a number as PKR currency.
 - **formatDate(dateString)**: Formats date strings into a readable format with error handling.
 - **formatWalletId(walletId)**: Shortens wallet IDs for display by truncating with ellipsis if too long.
 

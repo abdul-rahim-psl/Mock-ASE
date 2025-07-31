@@ -96,7 +96,7 @@ The tunnel URL will be displayed in the console. The integration automatically i
 1. Click "Add User" button in the header
 2. Fill in name and email
 3. System auto-generates unique wallet ID
-4. User appears in dashboard with $0 balance
+4. User appears in dashboard with PKR0 balance
 
 ### Managing Money (Like a bank teller)
 1. Select user from list

@@ -26,8 +26,8 @@ export type Transaction = {
 };
 
 // Helper function to generate a new wallet ID
-export const generateWalletId = (): string => {
-  return `wallet-${uuidv4().substring(0, 8)}`;
+export const generateWalletId = (iban: string): string => {
+  return `https://abl/accounts/${iban.replace(/\s+/g, '')}`;
 };
 
 // Helper function to generate a new IBAN

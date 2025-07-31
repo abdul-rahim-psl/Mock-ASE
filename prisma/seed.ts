@@ -45,7 +45,7 @@ async function main() {
         data: {
           id: walletId,
           userId: user.id,
-          balance: 1000.00, // Start with $1000 balance
+          balance: 1000.00, // Start with PKR1000 balance
         },
       });
 

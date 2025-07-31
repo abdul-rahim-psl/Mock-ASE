@@ -113,7 +113,7 @@ export const resolvers = {
     getTotalSystemBalance: async (): Promise<number> => {
       try {
         const balance = await getTotalSystemBalance();
-        logger.wallet(`Query: getTotalSystemBalance - Current system balance: $${balance.toFixed(2)}`);
+        logger.wallet(`Query: getTotalSystemBalance - Current system balance: PKR${balance.toFixed(2)}`);
         return balance;
       } catch (error) {
         logger.error(`Failed to get total system balance: ${error}`);
@@ -137,8 +137,8 @@ export const resolvers = {
           throw new Error('User with this email already exists');
         }
 
-        const walletId = generateWalletId();
         const iban = generateIBAN();
+        const walletId = generateWalletId(iban);
 
         // Use a transaction to ensure both user and wallet are created
         const result = await prisma.$transaction(async (tx: { user: { create: (arg0: { data: { name: string; email: string; walletId: string; iban: string; }; }) => any; }; wallet: { create: (arg0: { data: { id: string; userId: any; balance: number; }; }) => any; }; }) => {
@@ -184,7 +184,7 @@ export const resolvers = {
     },
 
     depositMoney: async (_: any, { userId, amount }: { userId: string; amount: number }): Promise<User> => {
-      logger.wallet(`Mutation: depositMoney - Depositing $${amount.toFixed(2)} to user ID: ${userId}`);
+      logger.wallet(`Mutation: depositMoney - Depositing PKR${amount.toFixed(2)} to user ID: ${userId}`);
       
       if (amount <= 0) {
         logger.error(`Deposit failed: Amount must be greater than zero (received: ${amount})`);
@@ -220,8 +220,8 @@ export const resolvers = {
             },
           });
           
-          logger.success(`Deposit successful: $${amount.toFixed(2)} to ${user.name}'s wallet`);
-          logger.wallet(`New balance for ${user.name}: $${newBalance.toFixed(2)}`);
+          logger.success(`Deposit successful: PKR${amount.toFixed(2)} to ${user.name}'s wallet`);
+          logger.wallet(`New balance for ${user.name}: PKR${newBalance.toFixed(2)}`);
           
           // Get the created transaction for webhook notification
           const transactions = await prisma.transaction.findMany({
@@ -279,7 +279,7 @@ export const resolvers = {
       toWalletId: string; 
       amount: number 
     }): Promise<Transaction> => {
-      logger.transfer(`Mutation: transferMoney - Transfer request: $${amount.toFixed(2)} from ${fromWalletId} to ${toWalletId}`);
+      logger.transfer(`Mutation: transferMoney - Transfer request: PKR${amount.toFixed(2)} from ${fromWalletId} to ${toWalletId}`);
       
       if (amount <= 0) {
         logger.error(`Transfer failed: Amount must be greater than zero (received: ${amount})`);
@@ -351,9 +351,9 @@ export const resolvers = {
           };
         });
 
-        logger.success(`Transfer completed: $${amount.toFixed(2)} from ${fromUser.name} to ${toUser.name} (ID: ${result.id})`);
-        logger.wallet(`New balance for ${fromUser.name}: $${(fromUser.balance - amount).toFixed(2)}`);
-        logger.wallet(`New balance for ${toUser.name}: $${(toUser.balance + amount).toFixed(2)}`);
+        logger.success(`Transfer completed: PKR${amount.toFixed(2)} from ${fromUser.name} to ${toUser.name} (ID: ${result.id})`);
+        logger.wallet(`New balance for ${fromUser.name}: PKR${(fromUser.balance - amount).toFixed(2)}`);
+        logger.wallet(`New balance for ${toUser.name}: PKR${(toUser.balance + amount).toFixed(2)}`);
 
         // Trigger webhook for the transfer transaction
         sendTransactionWebhook(result)

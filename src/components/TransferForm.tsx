@@ -227,7 +227,7 @@ export function TransferForm({ users, onTransferComplete }: TransferFormProps) {
                 Transfer Amount
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">PKR</span>
                 <input
                   type="number"
                   id="amount"
@@ -236,7 +236,7 @@ export function TransferForm({ users, onTransferComplete }: TransferFormProps) {
                   placeholder="0.00"
                   step="100"
                   min="0.01"
-                  className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-14 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   disabled={loading}
                   required
                 />

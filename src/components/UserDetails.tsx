@@ -108,7 +108,7 @@ export function UserDetails({ user, onUserUpdate }: UserDetailsProps) {
               Amount to Deposit
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">PKR</span>
               <input
                 type="number"
                 id="depositAmount"
@@ -117,7 +117,7 @@ export function UserDetails({ user, onUserUpdate }: UserDetailsProps) {
                 placeholder="0.00"
                 step="0.01"
                 min="0.01"
-                className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-14 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={depositLoading}
               />
             </div>
