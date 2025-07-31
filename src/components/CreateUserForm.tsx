@@ -154,7 +154,7 @@ export function CreateUserForm({ onUserCreated }: CreateUserFormProps) {
           <h3 className="font-medium text-blue-900 mb-2">What happens next?</h3>
           <ul className="text-sm text-blue-700 space-y-1">
             <li>• A unique wallet ID will be automatically generated</li>
-            <li>• The user will start with a PKR0.00 balance</li>
+            <li>• The user will start with a PKR 0.00 balance</li>
             <li>• You can immediately deposit money into their account</li>
             <li>• The user will appear in the user list</li>
           </ul>

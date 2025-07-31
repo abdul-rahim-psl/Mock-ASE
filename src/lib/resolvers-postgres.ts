@@ -138,6 +138,9 @@ export const resolvers = {
         }
 
         const iban = generateIBAN();
+
+        // function to call rafiki - iske against wallet address dedo
+
         const walletId = generateWalletId(iban);
 
         // Use a transaction to ensure both user and wallet are created
