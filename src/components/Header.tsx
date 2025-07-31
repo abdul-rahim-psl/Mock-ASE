@@ -17,7 +17,7 @@ export function Header({ totalBalance, onRefresh, activeView, onViewChange }: He
         {/* Logo and Title */}
         <div className="flex items-center space-x-4">
           <div className="text-xl font-bold text-[var(--text-heading)]">
-            Mock Account Servicing Entity
+            Mock ABL
           </div>
           <div className="text-sm text-[var(--text-muted)]">
             Total System Balance: {formatCurrency(totalBalance)}
