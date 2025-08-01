@@ -22,8 +22,8 @@ interface TransferFormProps {
 
 export function TransferForm({ users, onTransferComplete }: TransferFormProps) {
   const [formData, setFormData] = useState({
-    fromWalletId: '',
-    toWalletId: '',
+    fromWalletId: users.length > 0 ? users[0].walletId : '',
+    toWalletId: users.length > 0 ? users[users.length - 1].walletId : '',
     amount: '100',
   });
   const [loading, setLoading] = useState(false);

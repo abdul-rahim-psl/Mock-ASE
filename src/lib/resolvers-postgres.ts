@@ -309,7 +309,6 @@ export const resolvers = {
           });
         };
 
-        logger.info(`Transfer request: PKR${amount.toFixed(2)} from ${formatIban(sourceIban)} to ${formatIban(destIban)}`);
         // Find source user by IBAN (ignoring spaces)
         const sourceUser = await prisma.user.findUnique({
           where: { iban: formatIban(sourceIban) },
@@ -400,22 +399,6 @@ export const resolvers = {
           };
         });
 
-        logger.success(`Transfer completed: PKR${amount.toFixed(2)} from ${fromUser.name} to ${toUser.name} (ID: ${result.id})`);
-        logger.wallet(`New balance for ${fromUser.name}: PKR${(fromUser.balance - amount).toFixed(2)}`);
-        logger.wallet(`New balance for ${toUser.name}: PKR${(toUser.balance + amount).toFixed(2)}`);
-
-        // Trigger webhook for the transfer transaction
-        sendTransactionWebhook(result)
-          .then((success) => {
-            if (success) {
-              logger.success(`Webhook notifications sent successfully for transaction ${result.id}`);
-            } else {
-              logger.warn(`Some webhook notifications failed for transaction ${result.id}`);
-            }
-          })
-          .catch((error) => {
-            logger.error(`Error sending webhook notifications: ${error}`);
-          });
 
         return result;
       } catch (error) {
