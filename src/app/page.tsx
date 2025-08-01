@@ -66,6 +66,7 @@ export default function Dashboard() {
     walletId: string;
     balance: number;
     createdAt: string;
+    iban: string
   };
 
   const selectedUser = selectedUserId ? users.find((user: User) => user.id === selectedUserId) : null;

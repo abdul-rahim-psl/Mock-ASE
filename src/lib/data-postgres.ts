@@ -37,7 +37,7 @@ export const generateIBAN = (): string => {
   const generateRandomDigits = (length: number): string => {
     return Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
   };
-  
+
   // Format the IBAN with spaces every 4 characters
   const digits = generateRandomDigits(12);
   return `PK93 ABPA ${digits.substring(0, 4)} ${digits.substring(4, 8)} ${digits.substring(8, 12)}`;
@@ -52,14 +52,14 @@ export const findUserById = async (id: string): Promise<User | null> => {
     });
 
     if (!user || !user.wallet) return null;
-    
-    
+
+
     return {
       id: user.id,
       name: user.name,
       email: user.email,
       walletId: user.walletId,
-      iban: user.iban ?? 'no iban',
+      iban: user.iban,
       balance: Number(user.wallet.balance),
       createdAt: user.createdAt,
     };
@@ -77,14 +77,14 @@ export const findUserByWalletId = async (walletId: string): Promise<User | null>
     });
 
     if (!user || !user.wallet) return null;
-    
-    
+
+
     return {
       id: user.id,
       name: user.name,
       email: user.email,
       walletId: user.walletId,
-      iban: user.iban ?? 'no iban',
+      iban: user.iban,
       balance: Number(user.wallet.balance),
       createdAt: user.createdAt,
     };
@@ -111,7 +111,7 @@ export const updateUserBalance = async (userId: string, newBalance: number): Pro
     return {
       id: user.id,
       name: user.name,
-      iban: user.iban ?? 'no iban',
+      iban: user.iban,
       email: user.email,
       walletId: user.walletId,
       balance: newBalance,
@@ -204,7 +204,7 @@ export const getTotalSystemBalance = async (): Promise<number> => {
     const result = await prisma.wallet.aggregate({
       _sum: { balance: true },
     });
-    
+
     return Number(result._sum.balance || 0);
   } catch (error) {
     logger.error(`Database error calculating total balance: ${error}`);
