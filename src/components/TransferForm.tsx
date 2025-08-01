@@ -24,7 +24,7 @@ export function TransferForm({ users, onTransferComplete }: TransferFormProps) {
   const [formData, setFormData] = useState({
     fromWalletId: '',
     toWalletId: '',
-    amount: '',
+    amount: '100',
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -100,7 +100,7 @@ export function TransferForm({ users, onTransferComplete }: TransferFormProps) {
     } catch (error) {
       setMessage({ 
         type: 'error', 
-        text: error instanceof Error ? error.message : 'Failed to transfer money' 
+        text: error instanceof Error ? error.message + 'faillllllll' : 'Failed to transfer money' 
       });
     } finally {
       setLoading(false);

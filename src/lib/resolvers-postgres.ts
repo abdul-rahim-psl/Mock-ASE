@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { 
-  User, 
-  Transaction, 
+import {
+  User,
+  Transaction,
   generateWalletId,
   generateIBAN,
   findUserById,
@@ -21,7 +21,7 @@ export const resolvers = {
         const dbUsers = await prisma.user.findMany({
           include: { wallet: true }
         });
-        
+
         // Use a properly typed approach to map the results
         const users = dbUsers.map((user) => ({
           id: user.id,
@@ -32,7 +32,7 @@ export const resolvers = {
           createdAt: user.createdAt,
           iban: user.iban ?? 'no iban',
         }));
-        
+
         logger.user(`Query: getUsers - Fetching all users (count: ${users.length})`);
         return users;
       } catch (error) {
@@ -40,7 +40,7 @@ export const resolvers = {
         return [];
       }
     },
-    
+
     getUser: async (_: any, { id }: { id: string }): Promise<User | null> => {
       try {
         const user = await findUserById(id);
@@ -51,7 +51,7 @@ export const resolvers = {
         return null;
       }
     },
-    
+
     getUserByWalletId: async (_: any, { walletId }: { walletId: string }): Promise<User | null> => {
       try {
         const user = await findUserByWalletId(walletId);
@@ -62,13 +62,13 @@ export const resolvers = {
         return null;
       }
     },
-    
+
     getTransactions: async (): Promise<Transaction[]> => {
       try {
         const dbTransactions = await prisma.transaction.findMany({
           orderBy: { timestamp: 'desc' }
         });
-        
+
         const transactions = dbTransactions.map((tx: { id: any; fromWalletId: any; toWalletId: any; amount: any; timestamp: any; status: string; description: any; type: string; }) => ({
           id: tx.id,
           fromWalletId: tx.fromWalletId,
@@ -79,7 +79,7 @@ export const resolvers = {
           description: tx.description,
           type: tx.type as 'DEPOSIT' | 'TRANSFER'
         }));
-        
+
         logger.transfer(`Query: getTransactions - Fetching all transactions (count: ${transactions.length})`);
         return transactions;
       } catch (error) {
@@ -87,7 +87,7 @@ export const resolvers = {
         return [];
       }
     },
-    
+
     getUserTransactions: async (_: any, { userId }: { userId: string }): Promise<Transaction[]> => {
       try {
         const transactions = await getUserTransactions(userId);
@@ -98,7 +98,7 @@ export const resolvers = {
         return [];
       }
     },
-    
+
     getWalletTransactions: async (_: any, { walletId }: { walletId: string }): Promise<Transaction[]> => {
       try {
         const transactions = await getWalletTransactions(walletId);
@@ -109,7 +109,7 @@ export const resolvers = {
         return [];
       }
     },
-    
+
     getTotalSystemBalance: async (): Promise<number> => {
       try {
         const balance = await getTotalSystemBalance();
@@ -125,13 +125,13 @@ export const resolvers = {
   Mutation: {
     createUser: async (_: any, { name, email }: { name: string; email: string }): Promise<User> => {
       logger.user(`Mutation: createUser - Creating new user: ${name} (${email})`);
-      
+
       try {
         // Check if email already exists
         const existingUser = await prisma.user.findUnique({
           where: { email }
         });
-        
+
         if (existingUser) {
           logger.error(`Failed to create user: Email ${email} already exists`);
           throw new Error('User with this email already exists');
@@ -188,7 +188,7 @@ export const resolvers = {
 
     depositMoney: async (_: any, { userId, amount }: { userId: string; amount: number }): Promise<User> => {
       logger.wallet(`Mutation: depositMoney - Depositing PKR${amount.toFixed(2)} to user ID: ${userId}`);
-      
+
       if (amount <= 0) {
         logger.error(`Deposit failed: Amount must be greater than zero (received: ${amount})`);
         throw new Error('Deposit amount must be greater than zero');
@@ -205,13 +205,13 @@ export const resolvers = {
         // Use a transaction to update balance and create transaction record
         return await prisma.$transaction(async (tx: { wallet: { update: (arg0: { where: { id: string; }; data: { balance: number; }; }) => any; }; transaction: { create: (arg0: { data: { toWalletId: string; amount: number; status: string; description: string; type: string; }; }) => any; }; }) => {
           const newBalance = user.balance + amount;
-          
+
           // Update wallet balance
           await tx.wallet.update({
             where: { id: user.walletId },
             data: { balance: newBalance },
           });
-          
+
           // Create transaction record
           await tx.transaction.create({
             data: {
@@ -222,10 +222,10 @@ export const resolvers = {
               type: 'DEPOSIT',
             },
           });
-          
+
           logger.success(`Deposit successful: PKR${amount.toFixed(2)} to ${user.name}'s wallet`);
           logger.wallet(`New balance for ${user.name}: PKR${newBalance.toFixed(2)}`);
-          
+
           // Get the created transaction for webhook notification
           const transactions = await prisma.transaction.findMany({
             where: {
@@ -237,7 +237,7 @@ export const resolvers = {
             },
             take: 1,
           });
-          
+
           if (transactions.length > 0) {
             const transaction = transactions[0];
             // Convert to our Transaction type
@@ -251,7 +251,7 @@ export const resolvers = {
               description: transaction.description,
               type: transaction.type as 'DEPOSIT' | 'TRANSFER',
             };
-            
+
             // Trigger webhook for the deposit transaction
             sendTransactionWebhook(transactionData)
               .then((success) => {
@@ -265,7 +265,7 @@ export const resolvers = {
                 logger.error(`Error sending webhook notifications: ${error}`);
               });
           }
-          
+
           return {
             ...user,
             balance: newBalance,
@@ -277,64 +277,110 @@ export const resolvers = {
       }
     },
 
-    transferMoney: async (_: any, { fromWalletId, toWalletId, amount }: { 
-      fromWalletId: string; 
-      toWalletId: string; 
-      amount: number 
+    transferMoney: async (_: any, { fromWalletId, toWalletId, amount }: {
+      fromWalletId: string;
+      toWalletId: string;
+      amount: number
     }): Promise<Transaction> => {
       logger.transfer(`Mutation: transferMoney - Transfer request: PKR${amount.toFixed(2)} from ${fromWalletId} to ${toWalletId}`);
-      
-      if (amount <= 0) {
-        logger.error(`Transfer failed: Amount must be greater than zero (received: ${amount})`);
-        throw new Error('Transfer amount must be greater than zero');
-      }
 
-      if (fromWalletId === toWalletId) {
-        logger.error(`Transfer failed: Cannot transfer to the same wallet (${fromWalletId})`);
-        throw new Error('Cannot transfer to the same wallet');
-      }
 
       try {
-        const fromUser = await findUserByWalletId(fromWalletId);
-        const toUser = await findUserByWalletId(toWalletId);
+        // Extract IBAN from URL format if necessary
+        const extractIban = (id: string): string => {
+          if (id.startsWith('https://')) {
+            return id.split('/').pop() || '';
+          }
+          return id;
+        };
+        
+        const sourceIban = extractIban(fromWalletId);
+        const destIban = extractIban(toWalletId);
 
-        if (!fromUser) {
-          logger.error(`Transfer failed: Source wallet not found (${fromWalletId})`);
-          throw new Error('Source wallet not found');
+        
+        
+
+        // Format IBAN by adding a space after every 4 characters (not at the end if divisible by 4)
+        const formatIban = (iban: string) => {
+          const clean = iban.replace(/\s+/g, '');
+          return clean.replace(/(.{4})/g, (match, p1, offset, str) => {
+            // Only add a space if not at the end
+            return offset + 4 < str.length ? p1 + ' ' : p1;
+          });
+        };
+
+        logger.info(`Transfer request: PKR${amount.toFixed(2)} from ${formatIban(sourceIban)} to ${formatIban(destIban)}`);
+        // Find source user by IBAN (ignoring spaces)
+        const sourceUser = await prisma.user.findUnique({
+          where: { iban: formatIban(sourceIban) },
+          include: { wallet: true }
+        });
+
+        if (!sourceUser || !sourceUser.wallet) {
+          logger.error(`Transfer failed: Source account not found (IBAN: ${sourceIban})`);
+          throw new Error('Source account not found');
         }
 
-        if (!toUser) {
-          logger.error(`Transfer failed: Destination wallet not found (${toWalletId})`);
-          throw new Error('Destination wallet not found');
+        // Find destination user by IBAN
+        const destUser = await prisma.user.findUnique({
+          where: { iban: formatIban(destIban) },
+          include: { wallet: true }
+        });
+
+        if (!destUser || !destUser.wallet) {
+          logger.error(`Transfer failed: Destination account not found (IBAN: ${destIban})`);
+          throw new Error('Destination account not found');
         }
 
+        // Convert to our User type with balance
+        const fromUser = {
+          id: sourceUser.id,
+          name: sourceUser.name,
+          email: sourceUser.email,
+          walletId: sourceUser.walletId,
+          iban: sourceUser.iban || '',
+          balance: Number(sourceUser.wallet.balance),
+          createdAt: sourceUser.createdAt
+        };
+
+        const toUser = {
+          id: destUser.id,
+          name: destUser.name,
+          email: destUser.email,
+          walletId: destUser.walletId,
+          iban: destUser.iban || '',
+          balance: Number(destUser.wallet.balance),
+          createdAt: destUser.createdAt
+        };
+
+        // Check if source has sufficient funds
         if (fromUser.balance < amount) {
-          logger.error(`Transfer failed: Insufficient funds for ${fromUser.name} - Balance: $${fromUser.balance.toFixed(2)}, Required: $${amount.toFixed(2)}`);
+          logger.error(`Transfer failed: Insufficient funds for ${fromUser.name} - Balance: PKR${fromUser.balance.toFixed(2)}, Required: PKR${amount.toFixed(2)}`);
           throw new Error('Insufficient funds');
         }
 
         // Use a transaction for atomic updates
-        const result = await prisma.$transaction(async (tx: { wallet: { update: (arg0: { where: { id: string; } | { id: string; }; data: { balance: number; } | { balance: number; }; }) => any; }; transaction: { create: (arg0: { data: { fromWalletId: string; toWalletId: string; amount: number; status: string; description: string; type: string; }; }) => any; }; }) => {
+        const result = await prisma.$transaction(async (tx) => {
           const newFromBalance = fromUser.balance - amount;
           const newToBalance = toUser.balance + amount;
 
           // Update source wallet
           await tx.wallet.update({
-            where: { id: fromWalletId },
+            where: { id: fromUser.walletId },
             data: { balance: newFromBalance },
           });
 
           // Update destination wallet
           await tx.wallet.update({
-            where: { id: toWalletId },
+            where: { id: toUser.walletId },
             data: { balance: newToBalance },
           });
 
           // Create transaction record
           const transaction = await tx.transaction.create({
             data: {
-              fromWalletId,
-              toWalletId,
+              fromWalletId: fromUser.walletId,
+              toWalletId: toUser.walletId,
               amount,
               status: 'COMPLETED',
               description: `Transfer from ${fromUser.name} to ${toUser.name}`,
@@ -377,5 +423,6 @@ export const resolvers = {
         throw new Error(`Transfer failed: ${error}`);
       }
     },
+    
   },
 };
