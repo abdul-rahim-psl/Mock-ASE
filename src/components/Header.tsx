@@ -17,7 +17,7 @@ export function Header({ totalBalance, onRefresh, activeView, onViewChange }: He
         {/* Logo and Title */}
         <div className="flex items-center space-x-4">
           <div className="text-xl font-bold text-[var(--text-heading)]">
-            Mock ABL
+            Core Banking System
           </div>
           <div className="text-sm text-[var(--text-muted)]">
             Total System Balance: {formatCurrency(totalBalance)}
@@ -50,7 +50,7 @@ export function Header({ totalBalance, onRefresh, activeView, onViewChange }: He
             <span>Transactions</span>
           </button>
 
-          <button
+          {/* <button
             onClick={() => onViewChange('transfer')}
             className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
               activeView === 'transfer'
@@ -60,7 +60,7 @@ export function Header({ totalBalance, onRefresh, activeView, onViewChange }: He
           >
             <ArrowUpDown className="h-4 w-4" />
             <span>Transfer</span>
-          </button>
+          </button> */}
 
           <button
             onClick={() => onViewChange('create-user')}

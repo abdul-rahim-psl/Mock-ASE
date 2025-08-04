@@ -211,3 +211,61 @@ export const getTotalSystemBalance = async (): Promise<number> => {
     return 0;
   }
 };
+
+export const updateWalletIdByIBAN = async (iban: string, walletId: string): Promise<User | null> => {
+  try {
+    // Format the IBAN to ensure consistent matching
+    const formatIban = (ibanStr: string) => {
+      const clean = ibanStr.replace(/\s+/g, '');
+      return clean.replace(/(.{4})/g, (match, p1, offset, str) => {
+        return offset + 4 < str.length ? p1 + ' ' : p1;
+      });
+    };
+
+    const formattedIBAN = formatIban(iban);
+    
+    // First, find the user by IBAN
+    const user = await prisma.user.findUnique({
+      where: { iban: formattedIBAN },
+      include: { wallet: true }
+    });
+
+    if (!user || !user.wallet) {
+      logger.error(`User with IBAN ${formattedIBAN} not found`);
+      return null;
+    }
+
+    // Update the user's wallet ID
+    const updatedUser = await prisma.$transaction(async (tx) => {
+      // Update the wallet record
+      await tx.wallet.update({
+        where: { id: user.walletId },
+        data: { id: walletId }
+      });
+      
+      // Update the user record
+      const updated = await tx.user.update({
+        where: { id: user.id },
+        data: { walletId: walletId },
+        include: { wallet: true }
+      });
+      
+      return updated;
+    });
+
+    logger.success(`Updated wallet ID for user ${updatedUser.name}: ${user.walletId} → ${walletId}`);
+
+    return {
+      id: updatedUser.id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      walletId: updatedUser.walletId,
+      iban: updatedUser.iban,
+      balance: Number(updatedUser.wallet?.balance || 0),
+      createdAt: updatedUser.createdAt
+    };
+  } catch (error) {
+    logger.error(`Database error updating wallet ID by IBAN: ${error}`);
+    return null;
+  }
+};

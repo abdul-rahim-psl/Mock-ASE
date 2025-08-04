@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Mock ABL",
+  title: "Core Banking System",
   description: "A simplified bank teller system for managing customer accounts, deposits, and transfers",
 };
 

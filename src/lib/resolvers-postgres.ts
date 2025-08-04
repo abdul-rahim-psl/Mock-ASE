@@ -8,7 +8,8 @@ import {
   findUserByWalletId,
   getUserTransactions,
   getWalletTransactions,
-  getTotalSystemBalance
+  getTotalSystemBalance,
+  updateWalletIdByIBAN
 } from './data-postgres';
 import { logger } from './logger';
 import { prisma } from './prisma';
@@ -407,5 +408,23 @@ export const resolvers = {
       }
     },
     
+    updateWalletIdByIBAN: async (_: any, { iban, walletId }: { iban: string; walletId: string }): Promise<User> => {
+      logger.user(`Mutation: updateWalletIdByIBAN - Updating wallet ID for IBAN: ${iban} to ${walletId}`);
+      
+      try {
+        const user = await updateWalletIdByIBAN(iban, walletId);
+        
+        if (!user) {
+          logger.error(`Update failed: User with IBAN ${iban} not found`);
+          throw new Error('User with the specified IBAN not found');
+        }
+        
+        logger.success(`Wallet ID updated successfully for user ${user.name}`);
+        return user;
+      } catch (error) {
+        logger.error(`Failed to update wallet ID by IBAN: ${error}`);
+        throw new Error(`Failed to update wallet ID: ${error}`);
+      }
+    },
   },
 };

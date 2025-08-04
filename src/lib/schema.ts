@@ -47,5 +47,6 @@ export const typeDefs = gql`
     createUser(name: String!, email: String!): User!
     depositMoney(userId: ID!, amount: Float!): User!
     transferMoney(fromWalletId: String!, toWalletId: String!, amount: Float!): Transaction!
+    updateWalletIdByIBAN(iban: String!, walletId: String!): User!
   }
 `;
